@@ -1,0 +1,37 @@
+[project]
+name = "django-orm"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "k.barylnikov",email = "ipt_git_bot@ipt.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asgiref (>=3.11.1,<4.0.0)",
+    "django (>=6.0.2,<7.0.0)",
+    "sqlparse (>=0.5.5,<0.6.0)",
+    "psycopg[binary] (>=3.3.2,<4.0.0)",
+    "django-extensions (>=4.1,<5.0)",
+    "django-rosetta (>=0.10.3,<0.11.0)",
+    "pymemcache (>=4.0.0,<5.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.15.0,<0.16.0)",
+    "django-debug-toolbar (>=6.2.0,<7.0.0)",
+    "faker (>=40.4.0,<41.0.0)"
+]
+
+[tool.ruff]
+line-length = 120
+format.preview = true  # To enable quote-style preserve
+format.quote-style = 'preserve'
