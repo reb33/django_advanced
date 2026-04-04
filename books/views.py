@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_http_methods
@@ -9,7 +10,10 @@ from books.models import Book
 
 @require_http_methods(["GET"])
 def book_list(request):
-    books = Book.objects.all()
+    books = cache.get('cached_book_list')
+    if not books:
+        books = Book.objects.all()
+        cache.set('cached_book_list', books)
     form = BookCreateForm(auto_id=False)
     return render(request, 'books/base.html', {'book_list': books, 'form': form})
 

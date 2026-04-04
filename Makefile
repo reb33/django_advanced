@@ -6,13 +6,13 @@ ruff:
 
 data:
 	python manage.py migrate
-	python -Xutf8 manage.py loaddata mysite_data.json
+	python -Xutf8 manage.py loaddata data.json
 
 run:
 	python manage.py runserver
 
 dumpdata:
-	python -Xutf8 manage.py dumpdata --indent=2 --output=mysite_data.json
+	python -Xutf8 manage.py dumpdata --indent=2 --output=data.json
 
 migrate:
 	python manage.py makemigrations
