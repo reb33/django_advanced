@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,16 +25,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r7-#+edyj+4ro$m)i$q(-&n85hktm8&akty4@v4shq=a1(2ae5'
+# SECRET_KEY = 'django-insecure-r7-#+edyj+4ro$m)i$q(-&n85hktm8&akty4@v4shq=a1(2ae5'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+if os.getenv('DJANGO_ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS').split(' ')
+else:
+    ALLOWED_HOSTS = []
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
+if os.getenv('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(' ')
+
+INTERNAL_IPS = os.getenv('INTERNAL_IPS').split(' ')
 
 DEBUG_TOOLBAR_CONFIG = {
     'UPDATE_ON_FETCH': True,
@@ -142,8 +151,8 @@ LOCALE_PATHS = [
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': '127.0.0.1:11211',
+        'BACKEND': os.getenv('CACHES_BACKEND'),
+        'LOCATION': os.getenv('CACHES_LOCATION'),
     }
 }
 
