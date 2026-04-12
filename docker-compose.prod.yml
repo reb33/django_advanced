@@ -21,35 +21,32 @@ services:
     command:
       - -m 64
 
-  before_start_tasks:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    env_file:
-      - .env
-    environment:
-      POSTGRES_HOST: postgres
-    command: sh -c "python manage.py migrate && python -Xutf8 manage.py loaddata data.json"
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   django_advanced:
     build:
       context: .
       dockerfile: ./Dockerfile
     # Пробрасываем 8000 порт контейнера на 8000 порт локалхоста(127.0.0.1:8000)
-    ports:
-      - "127.0.0.1:8000:8000"
+#    ports:
+#      - "127.0.0.1:8000:8000"
     # Файл содержащий переменные окружения для контейнера
     env_file:
-      - .env
+      - .env.prod
     environment:
       CACHES_LOCATION: memcached:11211
       POSTGRES_HOST: postgres
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: gunicorn django_advanced.wsgi:application --bind 0.0.0.0:8000
     depends_on:
-      before_start_tasks:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
       memcached:
         condition: service_started
+
+  nginx:
+    # Указываем директорию ./nginx, в которой содержится Dockerfile для сборки образа
+    build: ./nginx
+    # Пробрасываем 80 порт контейнера на 80 порт локальной машины(порт будет доступен из вне)
+    ports:
+      - 80:80
+    # Дожидаемся запуска контейнера django_advanced
+    depends_on:
+      - django_advanced

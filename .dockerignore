@@ -4,3 +4,4 @@ venv
 install_pg_trgm.sql
 .dockerignore
 .env
+postgres_docker
