@@ -3,7 +3,7 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile_postgres
     container_name: postgres
     environment:
       POSTGRES_USER: hr

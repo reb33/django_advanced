@@ -104,7 +104,7 @@ DATABASES = {
         'NAME': 'hr',
         'USER': 'hr',
         'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': '5432',
     }
 }
