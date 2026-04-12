@@ -36,4 +36,3 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 WORKDIR /usr/src/app
 COPY . .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

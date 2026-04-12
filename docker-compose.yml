@@ -4,19 +4,52 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile_postgres
-    container_name: postgres
     environment:
       POSTGRES_USER: hr
       POSTGRES_PASSWORD: password
       POSTGRES_DB: hr
       POSTGRES_INITDB_ARGS: '--encoding=UTF8 --lc-collate=ru_RU.UTF-8 --lc-ctype=ru_RU.UTF-8'
-
     ports:
-      - 5432:5432
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "hr" ]
 
   memcached:
     image: memcached
     ports:
-      - 11211:11211
+      - "11211:11211"
     command:
       - -m 64
+
+  before_start_tasks:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: postgres
+    command: sh -c "python manage.py migrate && python -Xutf8 manage.py loaddata data.json"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  django_advanced:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    # Пробрасываем 8000 порт контейнера на 8000 порт локалхоста(127.0.0.1:8000)
+    ports:
+      - "127.0.0.1:8000:8000"
+    # Файл содержащий переменные окружения для контейнера
+    env_file:
+      - .env
+    environment:
+      CACHES_LOCATION: memcached:11211
+      POSTGRES_HOST: postgres
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    depends_on:
+      before_start_tasks:
+        condition: service_completed_successfully
+      memcached:
+        condition: service_started

@@ -1,0 +1,6 @@
+venv
+.idea
+*/Dockerfile*
+install_pg_trgm.sql
+.dockerignore
+.env
